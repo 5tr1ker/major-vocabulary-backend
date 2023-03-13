@@ -76,10 +76,10 @@ public class WebSecurityConfig {
 		http.csrf().disable() // Post 요청 block 제거
 			.authorizeHttpRequests() // 해당 메소드 아래는 각 경로에 따른 권한을 지정할 수 있다.
 			.requestMatchers("/").permitAll()
-				.requestMatchers("/user/**" , "/admin/**").hasRole("ADMIN")
-				.requestMatchers("/user/**").hasRole("USER") // .authenticated()
+				.requestMatchers("/user/**").hasAnyRole("ADMIN" , "USER")
+				.requestMatchers("/admin/**").hasRole("ADMIN") // .authenticated()
 				.anyRequest().permitAll()	// .requestMatchers("/**").permitAll() 와 같다.
-				.and().formLogin().loginPage("/requestRefreshToken") // 로그인된 사용자가 요청을 수행할  필요하다 만약 사용자가 인증되지 않았다면, 스프링 시큐리티 필터는 요청을 잡아내고 사용자를 로그인 페이지로 리다이렉션 해준다.
+				//.and().formLogin().loginPage("/requestRefreshToken")  로그인된 사용자가 요청을 수행할  필요하다 만약 사용자가 인증되지 않았다면, 스프링 시큐리티 필터는 요청을 잡아내고 사용자를 로그인 페이지로 리다이렉션 해준다.
 				// .logoutUrl("/logout") // 로그아웃 url 시 해당 쿠키를 제거
 				//.deleteCookies("refreshToken")
 				// .logoutSuccessUrl("/")
@@ -87,7 +87,7 @@ public class WebSecurityConfig {
 				.and().oauth2Login()
 				.clientRegistrationRepository(clientRegistrationRepository())
 				.authorizedClientService(authorizedClientService())
-				.and().exceptionHandling()
+				.and().exceptionHandling() // 인증 , 인가 되지 않은 사용자를 탐색
 				.authenticationEntryPoint((request, response, authException) -> { // 인증되지 않은 대상
 					response.sendRedirect("/invalidCertification");
 				})
