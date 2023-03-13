@@ -43,4 +43,21 @@ public class Controller {
 	public String requestRefreshToken() {
 		return "403 Error";
 	}
+	
+	@RequestMapping(value = "/invalidCertification" , method = RequestMethod.GET)
+	public MessageDTO invalidCertification() {
+		return MessageDTO.builder()
+			.code(-1)
+			.message("인증되지 않은 사용자")
+			.build();
+	}
+	
+	@RequestMapping(value = "/invalidAppropriation" , method = RequestMethod.GET)
+	public MessageDTO invalidAppropriation() {
+		return MessageDTO.builder()
+				.code(-1)
+				.message("인가되지 않은 사용자")
+				.build();
+	}
+	
 }

@@ -75,26 +75,26 @@ public class WebSecurityConfig {
 	public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
 		http.csrf().disable() // Post 요청 block 제거
 			.authorizeHttpRequests() // 해당 메소드 아래는 각 경로에 따른 권한을 지정할 수 있다.
-				//.authorizeRequests() 버전이 올라가면서 해당 함수는 Deprecated
-				.requestMatchers("/admin/**").authenticated() // 인증을 실시
-				.requestMatchers("/admin/**").hasRole("ADMIN")
-				.requestMatchers("/user/**").authenticated() // 인증을 실시
-				.requestMatchers("/user/**").hasRole("USER")
-				.requestMatchers("/**").permitAll()
-				.anyRequest().authenticated() // 로그인된 사용자가 요청을 수행할  필요하다 만약 사용자가 인증되지 않았다면, 스프링 시큐리티 필터는 요청을 잡아내고 사용자를
-												// 로그인 페이지로 리다이렉션 해준다.
-				.and().logout().permitAll()
-				
+			.requestMatchers("/").permitAll()
+				.requestMatchers("/user/**" , "/admin/**").hasRole("ADMIN")
+				.requestMatchers("/user/**").hasRole("USER") // .authenticated()
+				.anyRequest().permitAll()	// .requestMatchers("/**").permitAll() 와 같다.
+				.and().formLogin().loginPage("/requestRefreshToken") // 로그인된 사용자가 요청을 수행할  필요하다 만약 사용자가 인증되지 않았다면, 스프링 시큐리티 필터는 요청을 잡아내고 사용자를 로그인 페이지로 리다이렉션 해준다.
 				// .logoutUrl("/logout") // 로그아웃 url 시 해당 쿠키를 제거
 				//.deleteCookies("refreshToken")
 				// .logoutSuccessUrl("/")
-				.and().oauth2Login().loginPage("/requestRefreshToken") // 인가되지 않은 접근 시
+				
+				.and().oauth2Login()
 				.clientRegistrationRepository(clientRegistrationRepository())
 				.authorizedClientService(authorizedClientService())
-				.and().exceptionHandling();
-				// .accessDeniedPage("/accessDenied_page"); // 권한이 없는 대상이 접속을시도했을 때
-
-		http.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), // 필터
+				.and().exceptionHandling()
+				.authenticationEntryPoint((request, response, authException) -> { // 인증되지 않은 대상
+					response.sendRedirect("/invalidCertification");
+				})
+				.accessDeniedPage("/invalidAppropriation") // 인가되지 않은 대상 
+				/* */
+		.and()
+		.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), // 필터
 				UsernamePasswordAuthenticationFilter.class);
 
 		return http.build();

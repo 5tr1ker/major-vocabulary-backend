@@ -6,6 +6,6 @@ import com.konkuk.vocabulary.entity.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
 
-	public UserEntity findById(String username);
+	public UserEntity findById(String id);
 
 }

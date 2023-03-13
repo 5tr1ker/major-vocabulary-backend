@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.ResultActions;
@@ -30,6 +32,7 @@ public class ControllerTest {
     }
 	
 	@DisplayName("USER 사용자의 접근 허용")
+	@WithUserDetails(value = "USER")
 	@Test
 	public void accessUserRole() throws Exception {
 		//given
@@ -47,6 +50,20 @@ public class ControllerTest {
 		String str = mvcResult.getResponse().getContentAsString();
 		
 		assertThat(str).isEqualTo("userOnly");
+	}
+	
+	@DisplayName("익명 사용자의 차단")
+	@WithAnonymousUser
+	@Test
+	public void whenIsUnauthorizedAnonymouseUser() throws Exception {
+		//given
+		
+		//when
+		ResultActions resultActions = mockMvc.perform(MockMvcRequestBuilders.get("/user"));
+		
+		//then
+		resultActions.andExpect(status().isUnauthorized());
+		
 	}
 	
 }

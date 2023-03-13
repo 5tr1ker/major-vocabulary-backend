@@ -1,9 +1,9 @@
 package com.konkuk.vocabulary.entity;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -50,9 +50,12 @@ public class UserEntity implements UserDetails {
 	
 	@Override
 	public Collection<? extends GrantedAuthority> getAuthorities() {
-		return this.roles.stream()
-				.map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
+		Collection<GrantedAuthority> authorities = new ArrayList<>();
+		
+		for(String role : roles){
+            authorities.add(new SimpleGrantedAuthority(role));
+        }
+        return authorities;
 	}
 
 	@Override
