@@ -1,13 +1,12 @@
 package com.konkuk.vocabulary.service;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.konkuk.vocabulary.dto.MessageDTO;
 import com.konkuk.vocabulary.entity.RefreshToken;
 import com.konkuk.vocabulary.entity.Token;
 import com.konkuk.vocabulary.exception.FalsifyTokenException;
@@ -43,7 +42,7 @@ public class JwtService {
 		return refreshTokenRepository.findByRefreshToken(refreshToken);
 	}
 
-	public Map<String, String> validateRefreshToken(String refreshToken) {
+	public MessageDTO validateRefreshToken(String refreshToken) {
 		try {
 			RefreshToken refreshToken1 = getRefreshToken(refreshToken).get();
 			String createdAccessToken = jwtTokenProvider.validateRefreshToken(refreshToken1);
@@ -54,20 +53,18 @@ public class JwtService {
 		}
 	}
 
-	public Map<String, String> createRefreshJson(String createdAccessToken) {
-		Map<String, String> map = new HashMap<>();
+	public MessageDTO createRefreshJson(String createdAccessToken) {
 		if (createdAccessToken == null) {
-			map.put("code", "-1");
-			map.put("message", "Refresh 토큰이 만료되었습니다. 로그인이 필요합니다.");
-			map.put("accessToken", "null");
-			return map;
+			return MessageDTO.builder()
+					.code(-1)
+					.message("Refresh 토큰이 만료되었습니다. 로그인이 필요합니다.")
+					.build();
 		}
-		// 기존에 존재하는 accessToken 제거
-		map.put("code", "1");
-		map.put("message", "Refresh 토큰을 통한 Access Token 생성이 완료되었습니다.");
-		map.put("accessToken", createdAccessToken);
-
-		return map;
+		
+		return MessageDTO.builder()
+				.code(7)
+				.message(createdAccessToken)
+				.build();
 	}
 
 	public JwtService() {
