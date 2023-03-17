@@ -1,17 +1,22 @@
 package com.konkuk.vocabulary.controller;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.konkuk.vocabulary.dto.MessageDTO;
+import com.konkuk.vocabulary.service.JwtService;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 
 @RestController
 @Tag(name = "Controller~!~" , description = "Controller API Document")
-public class Controller {
+public class SecurityController {
+	
+	@Autowired JwtService jwtService;
 	
 	/*
 	 * Swagger의 자세한 사용법 : https://adjh54.tistory.com/72
@@ -38,21 +43,19 @@ public class Controller {
 		return "adminOnly";
 	}
 	
-	@Operation(summary = "권한 없음" , description = "테스트용 API 입니다." , tags = {"views"})
-	@RequestMapping(value = "/requestRefreshToken" , method = RequestMethod.GET)
-	public String requestRefreshToken() {
-		return "403 Error";
+	@RequestMapping(value = "/authentication/denied" , method = RequestMethod.GET)
+	public MessageDTO invalidCertification(@CookieValue(value = "refreshToken" , required = false) String refreshToken) {
+		if(refreshToken == null) {
+			return MessageDTO.builder()
+					.code(-1)
+					.message("인증되지 않은 사용자")
+					.build();
+		}
+		
+		return jwtService.validateRefreshToken(refreshToken);
 	}
 	
-	@RequestMapping(value = "/invalidCertification" , method = RequestMethod.GET)
-	public MessageDTO invalidCertification() {
-		return MessageDTO.builder()
-			.code(-1)
-			.message("인증되지 않은 사용자")
-			.build();
-	}
-	
-	@RequestMapping(value = "/invalidAppropriation" , method = RequestMethod.GET)
+	@RequestMapping(value = "/authorization/denied" , method = RequestMethod.GET)
 	public MessageDTO invalidAppropriation() {
 		return MessageDTO.builder()
 				.code(-1)

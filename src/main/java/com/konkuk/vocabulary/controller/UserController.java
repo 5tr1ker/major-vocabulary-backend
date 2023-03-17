@@ -13,6 +13,8 @@ import com.konkuk.vocabulary.dto.TokenDTO;
 import com.konkuk.vocabulary.dto.UserDTO;
 import com.konkuk.vocabulary.service.UserService;
 
+import jakarta.servlet.http.HttpServletResponse;
+
 
 @RestController
 public class UserController {
@@ -21,8 +23,8 @@ public class UserController {
 	private UserService userService;
 	
 	@RequestMapping(value = "/login" , method = RequestMethod.POST)
-	public TokenDTO loginUser(@RequestBody UserDTO userDTO) throws AccountException {
-		return userService.findId(userDTO);
+	public TokenDTO loginUser(@RequestBody UserDTO userDTO , HttpServletResponse response) throws AccountException {
+		return userService.findId(userDTO , response);
 	}
 	
 	@RequestMapping(value = "/register" , method = RequestMethod.POST)

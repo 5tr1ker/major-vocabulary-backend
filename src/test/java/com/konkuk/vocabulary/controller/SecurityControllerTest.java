@@ -18,10 +18,10 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
 @ExtendWith(MockitoExtension.class)
-public class ControllerTest {
+public class SecurityControllerTest {
 	
 	 @InjectMocks
-	 private Controller controller;
+	 private SecurityController controller;
 
 	
 	MockMvc mockMvc;

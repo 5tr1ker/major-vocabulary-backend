@@ -87,12 +87,11 @@ public class WebSecurityConfig {
 				.and().oauth2Login()
 				.clientRegistrationRepository(clientRegistrationRepository())
 				.authorizedClientService(authorizedClientService())
-				.and().exceptionHandling() // 인증 , 인가 되지 않은 사용자를 탐색
+				.and().exceptionHandling() // 인증 , 인가 되지 않은 사용자를 다룸
 				.authenticationEntryPoint((request, response, authException) -> { // 인증되지 않은 대상
-					response.sendRedirect("/invalidCertification");
+					response.sendRedirect("/authentication/denied");
 				})
-				.accessDeniedPage("/invalidAppropriation") // 인가되지 않은 대상 
-				/* */
+				.accessDeniedPage("/authorization/denied") // 인가되지 않은 대상
 		.and()
 		.addFilterBefore(new JwtAuthenticationFilter(jwtTokenProvider), // 필터
 				UsernamePasswordAuthenticationFilter.class);

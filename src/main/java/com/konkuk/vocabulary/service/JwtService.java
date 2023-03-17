@@ -56,7 +56,7 @@ public class JwtService {
 	public MessageDTO createRefreshJson(String createdAccessToken) {
 		if (createdAccessToken == null) {
 			return MessageDTO.builder()
-					.code(-1)
+					.code(-7)
 					.message("Refresh 토큰이 만료되었습니다. 로그인이 필요합니다.")
 					.build();
 		}
